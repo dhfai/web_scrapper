@@ -1,0 +1,8 @@
+fastapi
+pydantic
+requests
+beautifulsoup4
+google-generativeai
+uvicorn
+sqlalchemy
+PyMySQL
