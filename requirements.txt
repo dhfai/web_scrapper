@@ -1,8 +1,8 @@
-streamlit 
-langchain 
-langchain_ollama
-selenium
+fastapi
+pydantic
+requests
 beautifulsoup4
-lxml 
-html5lib
-python-dotenv
+google-generativeai
+uvicorn
+sqlalchemy
+PyMySQL
