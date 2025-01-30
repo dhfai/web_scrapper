@@ -6,31 +6,51 @@ load_dotenv()
 
 API_KEY = os.getenv("GEMINI_API_KEY")
 
+if not API_KEY:
+    raise ValueError("❌ API key for Gemini is missing. Please set GEMINI_API_KEY in your .env file.")
+
 genai.configure(api_key=API_KEY)
 model = genai.GenerativeModel("gemini-1.5-flash")
 
-def generate_ai_response(text: str, url: str) -> str:
+def generate_ai_response(text: str, url: str, task: str, parameters: list) -> str:
+    """
+    Generate AI response dynamically based on user-defined task and parameters.
 
+    Args:
+        text (str): Scraped text content from the website.
+        url (str): Website URL being scraped.
+        task (str): Task description for AI
+        parameters (list): List of data parameters to extract.
+
+    Returns:
+        str: AI-generated response or empty string if an error occurs.
+    """
     prompt = {
-        "taks": "judul_skripsi_fkip",
+        "task": task,
         "language": "indonesian",
-        "notes":
-        """
-            Scrape semua data judul skripsi dari website https://digilib.unismuh.ac.id/fakultas/01/
+        "notes": f"""
+            Scrape semua data dari website {url}
 
-            buat output datanya dalam bentuk file JSON dengan ketentuan sebagai berikut:
-            1. Data yang diambil tidak boleh diubah maupun ditambah. Data yang diambil harus bersifat [ORIGINAL]
+            Buat output dalam format JSON dengan ketentuan sebagai berikut:
+            ***Data yang diambil tidak boleh diubah maupun ditambah. Data harus bersifat [ORIGINAL]***
         """,
-        "parameters": ["judul skripsi", "penulis", "nim"],
+        "parameters": parameters,
         "data": {
             "website_url": url,
-            "judul": text,
+            "extracted_text": text,
         },
     }
+
     try:
-      ai_response = model.generate_content(str(prompt))
-      print(ai_response.text)
-      return ai_response.text
+        print(f"🚀 Sending request to Gemini AI with task: {task}")
+        ai_response = model.generate_content(str(prompt))
+
+        if ai_response and hasattr(ai_response, 'text'):
+            print(f"✅ AI Response received: {ai_response.text}...")
+            return ai_response.text
+        else:
+            print("❌ AI response is empty or invalid.")
+            return ""
     except Exception as e:
-        print(f"Error during AI response: {e}")
+        print(f"❌ Error during AI response generation: {e}")
         return ""
