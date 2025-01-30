@@ -12,3 +12,5 @@ def scrape_website(url: str) -> str:
     except requests.exceptions.RequestException as e:
         print(f"Error during scraping: {e}")
         return ""
+    
+
